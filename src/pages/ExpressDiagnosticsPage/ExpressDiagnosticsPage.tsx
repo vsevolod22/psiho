@@ -92,6 +92,7 @@ const specialties: Specialty[] = [
 ];
 
 // Тестовые вопросы (для примера - одинаковые для всех специальностей)
+// @ts-ignore
 const getQuestions = (specialtyId: number): Question[] => {
   // В реальном приложении здесь будут разные вопросы для разных специальностей
   return [

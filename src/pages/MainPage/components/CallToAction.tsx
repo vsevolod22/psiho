@@ -8,7 +8,7 @@ export const CallToAction = () => {
             Не откладывайте заботу о психологическом благополучии вашего ребенка. 
             Запишитесь на консультацию прямо сейчас!
          </p>
-         <Button size="lg" className="px-8 rounded-full">Записаться на консультацию</Button>
+         <Button size="large" className="px-8 rounded-full">Записаться на консультацию</Button>
       </section>
    );
 };
