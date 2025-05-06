@@ -172,7 +172,7 @@ export const ServicesSection = () => {
             <Button 
                variant="outline" 
                size="icon" 
-               className="absolute left-4 top-1/2 -translate-y-1/2 z-10 rounded-full shadow-md hover:bg-primary hover:text-white transition-colors"
+               className="absolute left-0 top-1/2 -translate-y-1/2 z-10 rounded-full shadow-md hover:bg-primary hover:text-white transition-colors"
                onClick={() => scroll('left')}
             >
                <ChevronLeft className="h-6 w-6" />
@@ -211,7 +211,7 @@ export const ServicesSection = () => {
             <Button 
                variant="outline" 
                size="icon" 
-               className="absolute right-4 top-1/2 -translate-y-1/2 z-10 rounded-full shadow-md hover:bg-primary hover:text-white transition-colors"
+               className="absolute right-0 top-1/2 -translate-y-1/2 z-10 rounded-full shadow-md hover:bg-primary hover:text-white transition-colors"
                onClick={() => scroll('right')}
             >
                <ChevronRight className="h-6 w-6" />

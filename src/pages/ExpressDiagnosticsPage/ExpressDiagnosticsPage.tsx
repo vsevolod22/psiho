@@ -194,60 +194,156 @@ export const ExpressDiagnosticsPage = () => {
   const [showResults, setShowResults] = useState(false);
   const [totalScore, setTotalScore] = useState(0);
   
-  const spinTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const spinCountRef = useRef(0);
-  const maxSpinCount = useRef(Math.floor(Math.random() * 20) + 30); // Случайное количество прокруток
+  // Новые состояния для CS:GO-стиля
+  const [itemsToShow, setItemsToShow] = useState<Specialty[]>([]);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [finalItemIndex, setFinalItemIndex] = useState(0);
+  const [showHighlight, setShowHighlight] = useState(false);
   
-  // Запуск рулетки
+  const spinTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const animationRef = useRef<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+  // Функция для воспроизведения звука тика
+  const playTickSound = () => {
+    try {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch(e => console.log('Ошибка воспроизведения звука:', e));
+      }
+    } catch (e) {
+      console.log('Ошибка воспроизведения звука:', e);
+    }
+  };
+  
+  // Инициализация звука
+  useEffect(() => {
+    audioRef.current = new Audio('/sounds/tick.mp3'); // Путь к звуку тика
+    audioRef.current.volume = 0.3;
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+  
+  // Запуск рулетки в стиле CS:GO
   const startSpin = () => {
     if (isSpinning) return;
     
+    // Сброс состояний
     setIsSpinning(true);
     setShowTest(false);
     setShowResults(false);
     setAnswers({});
     setCurrentQuestionIndex(0);
     setTotalScore(0);
-    spinCountRef.current = 0;
-    maxSpinCount.current = Math.floor(Math.random() * 20) + 30;
-    setSpinSpeed(100);
     
-    const spin = () => {
-      setVisibleSpecialtyIndex((prev) => (prev + 1) % specialties.length);
-      spinCountRef.current += 1;
+    // Определяем выигрышный предмет
+    const winningItemIndex = Math.floor(Math.random() * specialties.length);
+    setFinalItemIndex(winningItemIndex);
+    
+    // Создаем массив предметов для прокрутки (много случайных + выигрышный в конце)
+    const totalItems = 50; // Общее количество предметов для прокрутки
+    const items: Specialty[] = [];
+    
+    // Заполняем случайными предметами
+    for (let i = 0; i < totalItems - 1; i++) {
+      const randomIndex = Math.floor(Math.random() * specialties.length);
+      items.push(specialties[randomIndex]);
+    }
+    
+    // Добавляем выигрышный предмет в конец
+    items.push(specialties[winningItemIndex]);
+    
+    setItemsToShow(items);
+    setScrollPosition(0);
+    
+    // Начальные параметры анимации
+    let startTime = performance.now();
+    const duration = 7000; // Длительность анимации в мс
+    const itemWidth = 200; // Ширина элемента в пикселях
+    const totalDistance = (totalItems - 8) * itemWidth; // Общее расстояние прокрутки
+    
+    // Функция анимации
+    const animate = (timestamp: number) => {
+      // Прошедшее время
+      const elapsed = timestamp - startTime;
       
-      // Постепенно замедляем вращение
-      if (spinCountRef.current > maxSpinCount.current * 0.7) {
-        setSpinSpeed((prev) => Math.min(prev + 20, 500));
+      // Коэффициент прогресса (от 0 до 1)
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Функция замедления (easeOutExpo)
+      const easeOut = (t: number) => {
+        return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+      };
+      
+      // Применяем функцию замедления
+      const easedProgress = easeOut(progress);
+      
+      // Рассчитываем текущую позицию прокрутки
+      const newPosition = easedProgress * totalDistance;
+      setScrollPosition(newPosition);
+      
+      // Определяем текущий видимый элемент (для звука тика)
+      const currentItemIndex = Math.floor(newPosition / itemWidth);
+      if (currentItemIndex !== visibleSpecialtyIndex && currentItemIndex < totalItems - 1) {
+        setVisibleSpecialtyIndex(currentItemIndex);
+        playTickSound();
       }
       
-      if (spinCountRef.current < maxSpinCount.current) {
-        spinTimerRef.current = setTimeout(spin, spinSpeed);
+      // Продолжаем анимацию, если не достигли конца
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animate);
       } else {
-        // Остановка рулетки
-        setIsSpinning(false);
-        setSelectedSpecialty(specialties[visibleSpecialtyIndex]);
-        
-        // Запускаем конфетти
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
-        
-        // Показываем тест через небольшую задержку
-        setTimeout(() => {
-          setShowTest(true);
-        }, 1000);
+        // Анимация завершена
+        finishSpin();
       }
     };
     
-    spinTimerRef.current = setTimeout(spin, spinSpeed);
+    // Запускаем анимацию
+    animationRef.current = requestAnimationFrame(animate);
   };
   
-  // Очистка таймера при размонтировании компонента
+  // Завершение вращения
+  const finishSpin = () => {
+    // Подсветка выигрышного предмета
+    setShowHighlight(true);
+    
+    // Звук выигрыша
+    try {
+      const winSound = new Audio('/sounds/win.mp3'); // Путь к звуку выигрыша
+      winSound.play().catch(e => console.log('Ошибка воспроизведения звука:', e));
+    } catch (e) {
+      console.log('Ошибка воспроизведения звука:', e);
+    }
+    
+    // Запускаем конфетти
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+    
+    // Устанавливаем выбранную специальность
+    setSelectedSpecialty(specialties[finalItemIndex]);
+    setIsSpinning(false);
+    
+    // Показываем тест через небольшую задержку
+    setTimeout(() => {
+      setShowTest(true);
+      setShowHighlight(false);
+    }, 3000);
+  };
+  
+  // Очистка анимации при размонтировании компонента
   useEffect(() => {
     return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
       if (spinTimerRef.current) {
         clearTimeout(spinTimerRef.current);
       }
@@ -314,40 +410,59 @@ export const ExpressDiagnosticsPage = () => {
             className="max-w-3xl mx-auto mb-12"
           >
             <div className="relative">
-              {/* Декоративный элемент - указатель */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 -top-6 w-0 h-0 border-l-[20px] border-r-[20px] border-t-[30px] border-l-transparent border-r-transparent border-t-primary z-10"></div>
-              
-              {/* Рулетка */}
-              <div className="relative h-80 overflow-hidden rounded-xl border-4 border-primary shadow-xl bg-gradient-to-b from-gray-50 to-gray-100">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={visibleSpecialtyIndex}
-                    initial={{ y: 100, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -100, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute inset-0 flex items-center justify-center"
-                  >
-                    <Card className={`w-4/5 h-3/5 ${specialties[visibleSpecialtyIndex].color} text-white`}>
-                      <CardContent className="flex flex-col items-center justify-center h-full p-6 text-center">
-                        <div className="text-6xl mb-4">{specialties[visibleSpecialtyIndex].icon}</div>
-                        <h3 className="text-2xl font-bold mb-2">{specialties[visibleSpecialtyIndex].title}</h3>
-                        <p>{specialties[visibleSpecialtyIndex].description}</p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                </AnimatePresence>
+              {/* CS:GO стиль рулетки */}
+              <div className="relative h-80 overflow-hidden rounded-xl border-4 border-primary shadow-xl bg-gray-900">
+                {/* Центральный указатель */}
+                <div className="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-1 bg-primary z-20"></div>
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[10px] border-r-[10px] border-t-[15px] border-l-transparent border-r-transparent border-t-primary z-30"></div>
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[10px] border-r-[10px] border-b-[15px] border-l-transparent border-r-transparent border-b-primary z-30"></div>
+                
+                {/* Подсветка центра */}
+                <div className={`absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-[202px] bg-primary/20 z-10 ${showHighlight ? 'animate-pulse' : ''}`}></div>
+                
+                {/* Контейнер для прокрутки */}
+                <div 
+                  className="absolute top-0 bottom-0 left-0 flex items-center transition-transform"
+                  style={{ transform: `translateX(calc(50% - ${scrollPosition}px))` }}
+                >
+                  {itemsToShow.map((item, index) => (
+                    <div 
+                      key={`item-${index}`} 
+                      className={`flex-shrink-0 w-[200px] h-[180px] mx-[1px] flex items-center justify-center 
+                                ${index === itemsToShow.length - 1 && showHighlight ? 'scale-105 z-20' : ''}`}
+                    >
+                      <Card className={`w-full h-full ${item.color} text-white border-2 ${index === itemsToShow.length - 1 && showHighlight ? 'border-yellow-400 shadow-lg shadow-yellow-400/50' : 'border-gray-700'}`}>
+                        <CardContent className="flex flex-col items-center justify-center h-full p-4 text-center">
+                          <div className="text-5xl mb-3">{item.icon}</div>
+                          <h3 className="text-lg font-bold mb-1">{item.title}</h3>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
             
             <div className="flex justify-center mt-8">
               <Button 
                 size="large" 
-                className="px-8 py-6 rounded-full text-lg font-bold"
+                className={`px-8 py-6 rounded-full text-lg font-bold
+                    bg-gradient-to-r from-primary to-primary-dark
+                    shadow-md shadow-primary/20
+                    transition-all duration-300 transform
+                    ${isSpinning ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 hover:shadow-lg hover:shadow-primary/30'}`}
                 onClick={startSpin}
                 disabled={isSpinning}
               >
-                {isSpinning ? 'Вращается...' : 'Крутить рулетку!'}
+                {isSpinning ? (
+                  <span className="flex items-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Вращается...
+                  </span>
+                ) : 'Открыть кейс'}
               </Button>
             </div>
           </motion.div>
