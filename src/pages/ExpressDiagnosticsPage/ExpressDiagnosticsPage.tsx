@@ -204,6 +204,20 @@ export const ExpressDiagnosticsPage = () => {
   const animationRef = useRef<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   
+  // Заполнение карточек при загрузке страницы
+  useEffect(() => {
+    // Создаем начальный массив предметов для отображения
+    const initialItems: Specialty[] = [];
+    
+    // Заполняем случайными предметами
+    for (let i = 0; i < 20; i++) {
+      const randomIndex = Math.floor(Math.random() * specialties.length);
+      initialItems.push(specialties[randomIndex]);
+    }
+    
+    setItemsToShow(initialItems);
+  }, []);
+  
   // Функция для воспроизведения звука тика
   const playTickSound = () => {
     try {
@@ -386,12 +400,7 @@ export const ExpressDiagnosticsPage = () => {
   return (
     <Container>
       <section className="py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
+        <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text">
             Экспресс-диагностика талантов
           </h1>
@@ -400,38 +409,46 @@ export const ExpressDiagnosticsPage = () => {
             Прокрутите рулетку, чтобы определить область для тестирования ваших способностей.
             Пройдите короткий тест и узнайте свой потенциал в выбранной сфере!
           </p>
-        </motion.div>
+        </div>
         
         {!showTest && !selectedSpecialty && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-3xl mx-auto mb-12"
-          >
+          <div className="max-w-4xl mx-auto mb-12">
             <div className="relative">
-              {/* CS:GO стиль рулетки */}
-              <div className="relative h-80 overflow-hidden rounded-xl border-4 border-primary shadow-xl bg-gray-900">
+              {/* Улучшенный дизайн рулетки */}
+              <div className="relative h-80 overflow-hidden rounded-2xl border-4 border-primary/50 shadow-2xl bg-gradient-to-b from-gray-900 to-gray-800">
+                {/* Декоративные элементы */}
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent pointer-events-none"></div>
+                <div className="absolute top-0 left-0 w-full h-12 bg-gradient-to-b from-primary/20 to-transparent pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none"></div>
+                
+                {/* Боковые затемнения */}
+                <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-gray-900 to-transparent z-10 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-gray-900 to-transparent z-10 pointer-events-none"></div>
+                
                 {/* Центральный указатель */}
-                <div className="absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-1 bg-primary z-20"></div>
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[10px] border-r-[10px] border-t-[15px] border-l-transparent border-r-transparent border-t-primary z-30"></div>
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[10px] border-r-[10px] border-b-[15px] border-l-transparent border-r-transparent border-b-primary z-30"></div>
+                <div className="absolute top-0 bottom-0 left-1/2 transform  w-1 bg-gradient-to-b from-primary via-primary to-primary/50 z-20 rounded-full shadow-[0_0_15px_rgba(var(--primary-rgb),0.7)]"></div>
+                <div className="absolute top-0 left-1/2 transform  w-0 h-0 border-l-[12px] border-r-[12px] border-t-[18px] border-l-transparent border-r-transparent border-t-primary z-30 filter drop-shadow-lg"></div>
+                <div className="absolute bottom-0 left-1/2 transform  w-0 h-0 border-l-[12px] border-r-[12px] border-b-[18px] border-l-transparent border-r-transparent border-b-primary z-30 filter drop-shadow-lg"></div>
                 
                 {/* Подсветка центра */}
-                <div className={`absolute top-0 bottom-0 left-1/2 transform -translate-x-1/2 w-[202px] bg-primary/20 z-10 ${showHighlight ? 'animate-pulse' : ''}`}></div>
+                <div className={`absolute top-0 bottom-0 left-1/2 transform  w-[202px] bg-primary/10 z-10 ${showHighlight ? 'animate-pulse bg-primary/30' : ''}`}></div>
                 
                 {/* Контейнер для прокрутки */}
                 <div 
                   className="absolute top-0 bottom-0 left-0 flex items-center transition-transform"
-                  style={{ transform: `translateX(calc(50% - ${scrollPosition}px))` }}
+                  style={{ transform: `translateX(${-scrollPosition}px)` }}
                 >
                   {itemsToShow.map((item, index) => (
                     <div 
                       key={`item-${index}`} 
-                      className={`flex-shrink-0 w-[200px] h-[180px] mx-[1px] flex items-center justify-center 
-                                ${index === itemsToShow.length - 1 && showHighlight ? 'scale-105 z-20' : ''}`}
+                      className="flex-shrink-0 w-[200px] h-[180px] mx-[1px] flex items-center justify-center"
                     >
-                      <Card className={`w-full h-full ${item.color} text-white border-2 ${index === itemsToShow.length - 1 && showHighlight ? 'border-yellow-400 shadow-lg shadow-yellow-400/50' : 'border-gray-700'}`}>
+                      <Card 
+                        className={`w-full h-full ${item.color} text-white border-2 
+                                  ${index === itemsToShow.length - 1 && showHighlight 
+                                    ? 'border-yellow-400 shadow-[0_0_25px_rgba(234,179,8,0.5)]' 
+                                    : 'border-gray-700/50 bg-opacity-80'}`}
+                      >
                         <CardContent className="flex flex-col items-center justify-center h-full p-4 text-center">
                           <div className="text-5xl mb-3">{item.icon}</div>
                           <h3 className="text-lg font-bold mb-1">{item.title}</h3>
@@ -449,8 +466,8 @@ export const ExpressDiagnosticsPage = () => {
                 className={`px-8 py-6 rounded-full text-lg font-bold
                     bg-gradient-to-r from-primary to-primary-dark
                     shadow-md shadow-primary/20
-                    transition-all duration-300 transform
-                    ${isSpinning ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 hover:shadow-lg hover:shadow-primary/30'}`}
+                    transition-all duration-300
+                    ${isSpinning ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-lg hover:shadow-primary/30'}`}
                 onClick={startSpin}
                 disabled={isSpinning}
               >
@@ -462,10 +479,18 @@ export const ExpressDiagnosticsPage = () => {
                     </svg>
                     Вращается...
                   </span>
-                ) : 'Открыть кейс'}
+                ) : (
+                  <span className="flex items-center">
+                    <svg className="mr-2 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Открыть кейс
+                  </span>
+                )}
               </Button>
             </div>
-          </motion.div>
+          </div>
         )}
         
         {selectedSpecialty && !showTest && (
