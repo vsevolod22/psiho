@@ -6,6 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Card, CardContent, CardDescription, CardTitle } from '@/shared/ui/card';
 import { ChevronLeft } from 'lucide-react';
 import { servicesData } from '@/shared/data/servicesData';
+import { ContactModal } from '@/widgets/ContactModal';
 
 export const ServiceDetailsPage = () => {
    const { id } = useParams<{ id: string }>();
@@ -50,9 +51,12 @@ export const ServiceDetailsPage = () => {
                      ))}
                   </ul>
                   
-                  <Button size="large" className="px-8 rounded-full">
-                     Записаться на консультацию
-                  </Button>
+                  <ContactModal 
+                  buttonText="Записаться на консультацию" 
+                  buttonVariant="default" 
+                  buttonSize="large"
+                  />
+               
                </motion.div>
                
                <motion.div

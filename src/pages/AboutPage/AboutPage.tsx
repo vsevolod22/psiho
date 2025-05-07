@@ -2,6 +2,7 @@ import { Container } from '@/widgets/Container';
 import { motion } from 'framer-motion';
 import { Button } from '@/shared/ui/button';
 import { Link } from 'react-router-dom';
+import { ContactModal } from '@/widgets/ContactModal';
 import { 
    Tabs, 
    TabsContent, 
@@ -81,9 +82,12 @@ export const AboutPage = () => {
                      Наша задача — помочь детям и их родителям увидеть эти способности и создать условия для их развития.
                   </p>
                   <div className="flex gap-4 mt-8">
-                     <Button size="large" className="px-8 rounded-full">
-                        Записаться на консультацию
-                     </Button>
+                  <ContactModal 
+                  buttonText="Записаться на консультацию" 
+                  buttonVariant="default" 
+                  buttonSize="default"
+                  />
+               
                      <Link to="/services">
                         <Button variant="outline" size="large" className="px-8 rounded-full">
                            Наши услуги
@@ -250,9 +254,12 @@ export const AboutPage = () => {
                   Если у вас есть вопросы о нашем центре или вы хотите записаться на консультацию, 
                   пожалуйста, свяжитесь с нами любым удобным способом.
                </p>
-               <Button size="large" className="px-8 rounded-full">
-                  Записаться на консультацию
-               </Button>
+               <ContactModal 
+                  buttonText="Записаться на консультацию" 
+                  buttonVariant="default" 
+                  buttonSize="default"
+                  />
+               
             </motion.div>
          </section>
       </Container>

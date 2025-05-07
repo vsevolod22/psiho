@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/shared/ui/button';
 import { motion } from 'framer-motion';
+import { ContactModal } from '@/widgets/ContactModal';
 
 export const Hero = () => {
    return (
@@ -18,9 +19,12 @@ export const Hero = () => {
                помогающий раскрыть потенциал детей и подростков
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-               <Button size="large" className="px-8 rounded-full">
-                  Записаться на консультацию
-               </Button>
+                  <ContactModal 
+                  buttonText="Записаться на консультацию" 
+                  buttonVariant="default" 
+                  buttonSize="default"
+                  />
+               
                <Link to="/services">
                   <Button variant="outline" size="large" className="px-8 rounded-full">
                      Наши услуги

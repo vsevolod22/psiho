@@ -1,4 +1,5 @@
 import { Button } from '@/shared/ui/button';
+import { ContactModal } from '@/widgets/ContactModal';
 
 export const CallToAction = () => {
    return (
@@ -8,7 +9,12 @@ export const CallToAction = () => {
             Не откладывайте заботу о психологическом благополучии вашего ребенка. 
             Запишитесь на консультацию прямо сейчас!
          </p>
-         <Button size="large" className="px-8 rounded-full">Записаться на консультацию</Button>
+         <ContactModal 
+                  buttonText="Записаться на консультацию" 
+                  buttonVariant="default" 
+                  buttonSize="large"
+                  />
+               
       </section>
    );
 };

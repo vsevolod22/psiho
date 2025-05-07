@@ -6,7 +6,7 @@ import { RegistrationForm } from './RegistrationForm';
 import { LoginForm } from './LoginForm';
 import { useTokenStore } from '../model/store/authStore';
 import { cn } from '@/utils/lib/utils';
-import TelegramLoginButton from './telegrammBtn';
+
 
 interface AuthModalProps {
    authModalMode?: 'login' | 'register';
