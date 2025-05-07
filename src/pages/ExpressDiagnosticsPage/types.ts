@@ -85,6 +85,8 @@ export const specialties: Specialty[] = [
 ];
 
 // Test questions
+
+//@ts-ignore
 export const getQuestions = (specialtyId: number): Question[] => {
   // In a real application, there would be different questions for different specialties
   return [
