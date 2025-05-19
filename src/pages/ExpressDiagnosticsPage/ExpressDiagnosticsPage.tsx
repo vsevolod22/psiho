@@ -83,13 +83,9 @@ export const ExpressDiagnosticsPage = () => {
   // Обработка завершения рулетки
   const handleRouletteFinish = (profession: IProfession) => {
     setSelectedProfession(profession);
-    setIsLoading(true);
+    setShowTest(true);
     
-    // Имитация загрузки теста с небольшой задержкой
-    setTimeout(() => {
-      setIsLoading(false);
-      setShowTest(true);
-    }, 2000); // Задержка в 2 секунды для имитации загрузки
+    
   };
   
   // Перезапуск теста
@@ -108,7 +104,7 @@ export const ExpressDiagnosticsPage = () => {
     <Container>
       <section className="py-12">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text">
             Экспресс-диагностика талантов
           </h1>
           <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-8"></div>

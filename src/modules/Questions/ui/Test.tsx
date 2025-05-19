@@ -10,9 +10,16 @@ import { useQuestionsStore } from '../model/store/questionsStore';
 interface TestProps {
   onRestart: () => void;
   professionId: number;
+  specialty: {
+    id: number;
+    title: string;
+    description: string;
+    icon: string;
+    color: string;
+  }
 }
 
-export const Test = ({ onRestart, professionId }: TestProps) => {
+export const Test = ({ onRestart, professionId, specialty }: TestProps) => {
   // Используйте professionId для загрузки вопросов для конкретной профессии
   // Получаем данные из хранилища
   const { 
@@ -79,9 +86,40 @@ export const Test = ({ onRestart, professionId }: TestProps) => {
   // Если загружаем вопросы, показываем индикатор загрузки
   if (isQuestionsLoading) {
     return (
-      <div className="flex justify-center items-center h-80">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
-      </div>
+      <motion.div
+      key="loading"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-2xl mx-auto"
+    >
+      <Card className="mb-8 border-2 border-primary/20 shadow-xl">
+        <CardContent className="p-6">
+          <div className="flex items-center mb-6">
+            <div className={`text-4xl p-3 rounded-full ${specialty.color} text-white mr-4`}>
+              {specialty.icon}
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold">{specialty.title}</h2>
+              <p className="text-gray-500">{specialty.description}</p>
+              
+            </div>
+          </div>
+          
+          <div className="flex flex-col items-center justify-center py-8">
+            <div className="mb-4">
+              <svg className="animate-spin h-10 w-10 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+            <p className="text-xl font-medium text-center">Загружаем тест...</p>
+            <p className="text-gray-500 mt-2 text-center">Подготавливаем вопросы для оценки ваших способностей в области "{specialty.title}"</p>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
     );
   }
   
