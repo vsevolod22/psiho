@@ -1,10 +1,10 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, createHashRouter } from 'react-router-dom';
 
 import BaseLayout from '@/app/layout/BaseLayout';
 import { MainPage } from '@/pages/MainPage/MainPage';
 import { routeConfig } from '@/utils/config/pagesConfig';
 
-export const appRouter = createBrowserRouter(
+export const appRouter = createHashRouter(
    [
       {
          element: <BaseLayout />,
