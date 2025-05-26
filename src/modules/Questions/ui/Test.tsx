@@ -19,7 +19,7 @@ interface TestProps {
   }
 }
 
-export const Test = ({ onRestart, professionId, specialty }: TestProps) => {
+export const Test = ({ onRestart, specialty }: TestProps) => {
   // Используйте professionId для загрузки вопросов для конкретной профессии
   // Получаем данные из хранилища
   const { 

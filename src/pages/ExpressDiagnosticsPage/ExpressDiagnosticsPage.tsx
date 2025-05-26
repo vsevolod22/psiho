@@ -184,6 +184,7 @@ export const ExpressDiagnosticsPage = () => {
               {selectedProfession && showTest && (
                 <Test 
                   specialty={adaptProfessionToSpecialty(selectedProfession)} 
+                  //@ts-ignore
                   testResults={testResults}
                   onRestart={restartTest}
                 />
