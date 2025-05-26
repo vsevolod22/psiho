@@ -6,6 +6,7 @@ import { ServicesPage } from '@/pages/ServicesPage/ServicesPage';
 import { ServiceDetailsPage } from '@/pages/ServiceDetailsPage/ServiceDetailsPage';
 import { AboutPage } from '@/pages/AboutPage/AboutPage';
 import { ExpressDiagnosticsPage } from '@/pages/ExpressDiagnosticsPage/ExpressDiagnosticsPage';
+import PDFReader from '@/pages/pdfpage/PdfPage';
 
 export enum AppRoutes {
    MAIN = 'main',
@@ -14,6 +15,7 @@ export enum AppRoutes {
    ABOUT = 'about',
    EXPRESS_DIAGNOSTICS = 'express_diagnostics',
    NOT_FOUND = 'not_found',
+   PDF_READER = "pdf_reader"
 }
 
 export const RoutePath: Record<AppRoutes, string> = {
@@ -23,6 +25,7 @@ export const RoutePath: Record<AppRoutes, string> = {
    [AppRoutes.ABOUT]: '/about',
    [AppRoutes.EXPRESS_DIAGNOSTICS]: '/express-diagnostics',
    [AppRoutes.NOT_FOUND]: '*',
+   [AppRoutes.PDF_READER]: "/pdf" // Убираем параметр :id из пути
 };
 
 export const routeConfig: Record<AppRoutes, RouteObject> = {
@@ -50,4 +53,8 @@ export const routeConfig: Record<AppRoutes, RouteObject> = {
       path: RoutePath.not_found,
       element: <NotFoundPage />,
    },
+   [AppRoutes.PDF_READER]: {
+      path: RoutePath.pdf_reader,
+      element: <PDFReader />,
+   }
 };
