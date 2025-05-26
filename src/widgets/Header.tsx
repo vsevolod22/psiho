@@ -15,6 +15,7 @@ export const Header = () => {
       { title: 'Услуги', path: '/services' },
       { title: 'О центре', path: '/about' },
       { title: 'Экспресс-диагностика', path: '/express-diagnostics' },
+      { title: 'PDF файл посмотреть', path: '/pdf' },
    ];
 
    return (
